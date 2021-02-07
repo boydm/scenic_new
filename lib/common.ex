@@ -4,7 +4,7 @@
 #
 
 # A module to hold terms that represent the static file assets.
-# better to do this once than load them repeatedly into the 
+# better to do this once than load them repeatedly into the
 # different "new" types.
 
 defmodule ScenicNew.Common do
@@ -69,7 +69,7 @@ defmodule ScenicNew.Common do
     end
   end
 
-  def check_mod_name_validity!(name) do
+  def check_mod_name_validity!(name) when is_binary(name) do
     unless name =~ Regex.recompile!(~r/^[A-Z]\w*(\.[A-Z]\w*)*$/) do
       Mix.raise(
         "Module name must be a valid Elixir alias (for example: Foo.Bar), got: #{inspect(name)}"
@@ -98,5 +98,9 @@ defmodule ScenicNew.Common do
     if File.dir?(path) and not Mix.shell().yes?(msg) do
       Mix.raise("Please select another directory for installation")
     end
+  end
+
+  def base_module do
+    Mix.Project.config() |> Keyword.fetch!(:app) |> Atom.to_string() |> Macro.camelize()
   end
 end
